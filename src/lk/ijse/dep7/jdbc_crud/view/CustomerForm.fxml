@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<AnchorPane prefHeight="506.0" prefWidth="589.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="lk.ijse.dep7.jdbc_crud.controller.CustomerForm">
+   <children>
+       <TextField fx:id="txtID" layoutX="22.0" layoutY="27.0" prefHeight="26.0" prefWidth="148.0" promptText="Customer ID" />
+       <TextField fx:id="txtNIC" layoutX="22.0" layoutY="61.0" prefHeight="26.0" prefWidth="148.0" promptText="Customer NIC" />
+       <TextField fx:id="txtName" layoutX="22.0" layoutY="96.0" prefHeight="26.0" prefWidth="547.0" promptText="Customer Name" />
+       <TextField fx:id="txtAddress" layoutX="22.0" layoutY="130.0" prefHeight="26.0" prefWidth="547.0" promptText="Customer Address" />
+       <Button fx:id="btnSave" layoutX="215.0" layoutY="165.0" mnemonicParsing="false" onAction="#btnSave_OnAction" prefHeight="26.0" prefWidth="76.0" text="Save" />
+       <Button fx:id="btnDelete" layoutX="296.0" layoutY="165.0" mnemonicParsing="false" onAction="#btnDelete_OnAction" prefHeight="26.0" prefWidth="76.0" text="Delete" />
+       <Button fx:id="btnClear" layoutX="475.0" layoutY="22.0" mnemonicParsing="false" onAction="#btnClear_OnAction" prefHeight="26.0" prefWidth="94.0" text="Clear" />
+       <TextField fx:id="txtSearch" layoutX="22.0" layoutY="202.0" prefHeight="26.0" prefWidth="547.0" promptText="Search Customer via ID, Name, Address, NIC, etc." />
+      <TableView fx:id="tblCustomers" layoutX="22.0" layoutY="238.0" prefHeight="248.0" prefWidth="547.0">
+        <columns>
+          <TableColumn prefWidth="75.0" text="ID" />
+          <TableColumn prefWidth="135.0" text="Name" />
+            <TableColumn prefWidth="135.0" text="Address" />
+            <TableColumn prefWidth="101.0" text="NIC" />
+        </columns>
+      </TableView>
+   </children>
+</AnchorPane>
