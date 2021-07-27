@@ -24,7 +24,7 @@ public class CustomerForm {
     public TextField txtSearch;
     private Connection connection;
 
-    public void initialize(){
+    public void initialize() {
         tblCustomers.getColumns().get(0).setCellValueFactory(new PropertyValueFactory<>("id"));
         tblCustomers.getColumns().get(1).setCellValueFactory(new PropertyValueFactory<>("name"));
         tblCustomers.getColumns().get(2).setCellValueFactory(new PropertyValueFactory<>("address"));
@@ -36,10 +36,10 @@ public class CustomerForm {
             String address = txtAddress.getText();
             String nic = txtNIC.getText();
 
-            btnSave.setDisable (!(id.matches("C\\d{3}") &&
-                name.matches("[A-Za-z ]{3,}") &&
-                address.matches(".{4,}") &&
-                nic.matches("\\d{9}[Vv]")));
+            btnSave.setDisable(!(id.matches("C\\d{3}") &&
+                    name.matches("[A-Za-z ]{3,}") &&
+                    address.matches(".{4,}") &&
+                    nic.matches("\\d{9}[Vv]")));
         };
 
         txtID.textProperty().addListener(listener);
@@ -57,7 +57,7 @@ public class CustomerForm {
         });
 
         tblCustomers.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, selectedCustomer) -> {
-            if (selectedCustomer != null){
+            if (selectedCustomer != null) {
                 txtID.setText(selectedCustomer.getId());
                 txtNIC.setText(selectedCustomer.getNic());
                 txtName.setText(selectedCustomer.getName());
@@ -65,7 +65,7 @@ public class CustomerForm {
                 txtID.setDisable(true);
                 btnDelete.setDisable(false);
                 btnSave.setText("Update");
-            }else{
+            } else {
                 btnSave.setText("Save");
                 btnDelete.setDisable(true);
             }
@@ -80,9 +80,9 @@ public class CustomerForm {
             System.exit(1);
         }
 
-        Runtime.getRuntime().addShutdownHook(new Thread(()->{
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
             try {
-                if (!connection.isClosed()){
+                if (!connection.isClosed()) {
                     connection.close();
                 }
             } catch (SQLException ex) {
@@ -94,7 +94,7 @@ public class CustomerForm {
             Statement stm = connection.createStatement();
             ResultSet rst = stm.executeQuery("SELECT * FROM customer");
 
-            while (rst.next()){
+            while (rst.next()) {
                 String id = rst.getString("id");
                 String nic = rst.getString("nic");
                 String name = rst.getString(3);
@@ -116,17 +116,29 @@ public class CustomerForm {
 
         if (btnSave.getText().equals("Save")) {
 
-            /* Todo: Save the customer in DB */
+            try {
+                Statement stm = connection.createStatement();
+                String sql = "INSERT INTO customer VALUES ('%s','%s','%s','%s')";
+                sql = String.format(sql, id, nic, name, address);
+                int affectedRows = stm.executeUpdate(sql);
 
-            if (true) {
-                tblCustomers.getItems().add(new CustomerTM(id, nic, name, address));
-                btnClear.fire();
-            } else {
-                new Alert(Alert.AlertType.ERROR, "Failed to save the customer").show();
+                if (affectedRows == 1) {
+                    tblCustomers.getItems().add(new CustomerTM(id, nic, name, address));
+                    btnClear.fire();
+                } else {
+                    new Alert(Alert.AlertType.ERROR, "Failed to save the customer, retry").show();
+                }
 
-                /* Todo: Transfer the focus to right text field */
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+//                String errMsg = "Failed to save the customer";
+//                switch (ex.getErrorCode()){
+//                    case 1062:
+//                        errMsg = "Duplicate record, please check the customer ID and NIC";
+//                }
+                new Alert(Alert.AlertType.ERROR, ex.getMessage()).show();
             }
-        }else{
+        } else {
 
             /* Todo: Update the customer in DB */
 
@@ -152,11 +164,11 @@ public class CustomerForm {
 
         // Todo: Delete the customer in DB
 
-        if (true){
+        if (true) {
             tblCustomers.getItems().remove(selectedCustomer);
             tblCustomers.refresh();
             btnClear.fire();
-        }else{
+        } else {
             new Alert(Alert.AlertType.ERROR, "Failed to delete the customer").show();
         }
     }
