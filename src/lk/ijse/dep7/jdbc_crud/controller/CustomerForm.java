@@ -10,6 +10,8 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import lk.ijse.dep7.jdbc_crud.tm.CustomerTM;
 
+import java.sql.*;
+
 public class CustomerForm {
     public TableView<CustomerTM> tblCustomers;
     public TextField txtID;
@@ -20,6 +22,7 @@ public class CustomerForm {
     public Button btnDelete;
     public Button btnClear;
     public TextField txtSearch;
+    private Connection connection;
 
     public void initialize(){
         tblCustomers.getColumns().get(0).setCellValueFactory(new PropertyValueFactory<>("id"));
@@ -67,6 +70,42 @@ public class CustomerForm {
                 btnDelete.setDisable(true);
             }
         });
+
+        try {
+            Class.forName("com.mysql.cj.jdbc.Driver");
+            connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/dep7", "root", "mysql");
+        } catch (SQLException | ClassNotFoundException ex) {
+            new Alert(Alert.AlertType.ERROR, "Failed to connect to the database server.").showAndWait();
+            ex.printStackTrace();
+            System.exit(1);
+        }
+
+        Runtime.getRuntime().addShutdownHook(new Thread(()->{
+            try {
+                if (!connection.isClosed()){
+                    connection.close();
+                }
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+            }
+        }));
+
+        try {
+            Statement stm = connection.createStatement();
+            ResultSet rst = stm.executeQuery("SELECT * FROM customer");
+
+            while (rst.next()){
+                String id = rst.getString("id");
+                String nic = rst.getString("nic");
+                String name = rst.getString(3);
+                String address = rst.getString(4);
+                tblCustomers.getItems().add(new CustomerTM(id, nic, name, address));
+            }
+
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+
     }
 
     public void btnSave_OnAction(ActionEvent actionEvent) {
